@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Copa 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- TELA DE MENU -->
+    <div id="menu-screen" class="screen">
+        <div class="menu-content">
+            <h1 class="game-title">🏆 Wordle Copa 2026</h1>
+            <p class="game-subtitle">Adivinhe a seleção! Letra por letra.</p>
+
+            <div class="menu-buttons">
+                <button class="btn menu-btn" id="difficulty-select" data-value="medium">Dificuldade: Médio</button>
+                <button class="btn primary-btn" id="start-btn">▶ Jogar</button>
+                <div class="menu-secondary-buttons">
+                    <button class="btn icon-btn" id="sound-btn" aria-label="Som">🔊</button>
+                    <button class="btn icon-btn" id="history-btn" aria-label="Histórico">📊</button>
+                </div>
+            </div>
+
+            <div class="menu-info">
+                <p>3 fases · 3 vidas · Power-ups disponíveis</p>
+                <p class="small-text">Teclado físico ou virtual · Atalho: Esc/P para pausar</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA DE JOGO -->
+    <div id="game-screen" class="screen hidden">
+        <!-- Header do jogo -->
+        <div class="game-header">
+            <div class="header-left">
+                <span id="lives-display">❤️❤️❤️</span>
+                <span id="score-display">Pontos: 0</span>
+                <span id="phase-display">Fase 1</span>
+            </div>
+            <div class="header-center">
+                <span id="timer-display" class="hidden">⏱ 60s</span>
+                <div id="hint-display" class="hidden"></div>
+            </div>
+            <div class="header-right">
+                <span id="powerups-display"></span>
+                <button class="btn icon-btn" id="game-sound-btn" aria-label="Som">🔊</button>
+                <button class="btn icon-btn" id="pause-btn" aria-label="Pausa">⏸</button>
+            </div>
+        </div>
+
+        <!-- Mensagens -->
+        <div id="message-display" class="message hidden"></div>
+
+        <!-- Grade do jogo -->
+        <div id="grid-container" class="grid-container"></div>
+
+        <!-- Teclado virtual -->
+        <div id="keyboard-container" class="keyboard-container"></div>
+    </div>
+
+    <!-- TELA DE FIM DE JOGO -->
+    <div id="gameover-screen" class="screen hidden">
+        <div class="gameover-content">
+            <h1 id="gameover-title">🎉 Parabéns!</h1>
+            <div class="gameover-details">
+                <p id="final-score-display">Pontuação Final: 0</p>
+                <p id="last-word-display">Palavra: -----</p>
+                <p id="high-score-display">Recorde: 0</p>
+            </div>
+            <div class="gameover-buttons">
+                <button class="btn primary-btn" id="restart-btn">🔄 Jogar Novamente</button>
+                <button class="btn menu-btn" id="menu-btn">🏠 Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERLAY DE PAUSA -->
+    <div id="pause-overlay" class="overlay hidden">
+        <div class="pause-content">
+            <h2>⏸ Jogo Pausado</h2>
+            <div class="pause-buttons">
+                <button class="btn primary-btn" id="resume-btn">▶ Continuar</button>
+                <button class="btn menu-btn" id="quit-btn">🚪 Desistir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts (ordem de dependência) -->
+    <script src="js/words.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/keyboard.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
