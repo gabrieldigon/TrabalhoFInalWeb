@@ -226,21 +226,6 @@ body {
     font-weight: 500;
 }
 
-#timer-display {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--warning-color);
-    background: rgba(245, 158, 11, 0.15);
-    padding: 4px 12px;
-    border-radius: 20px;
-}
-
-#timer-display.warning {
-    color: var(--error-color);
-    background: rgba(220, 38, 38, 0.2);
-    animation: pulse 0.5s ease-in-out infinite;
-}
-
 #powerups-display {
     display: flex;
     gap: 4px;
@@ -272,10 +257,6 @@ body {
 
 .life-btn:hover:not(:disabled) {
     border-color: var(--green-correct);
-}
-
-.freeze-btn:hover:not(:disabled) {
-    border-color: var(--info-color);
 }
 
 .message {

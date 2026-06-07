@@ -59,9 +59,9 @@ const Storage = {
     getSettings() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-            return data ? JSON.parse(data) : { soundEnabled: true, theme: 'default' };
+            return data ? JSON.parse(data) : { soundEnabled: true };
         } catch (e) {
-            return { soundEnabled: true, theme: 'default' };
+            return { soundEnabled: true };
         }
     },
 
@@ -74,9 +74,9 @@ const Storage = {
     getPowerUps() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.POWER_UPS);
-            return data ? JSON.parse(data) : { hints: 0, extraLives: 0, freeze: 0 };
+            return data ? JSON.parse(data) : { hints: 0, extraLives: 0 };
         } catch (e) {
-            return { hints: 0, extraLives: 0, freeze: 0 };
+            return { hints: 0, extraLives: 0 };
         }
     },
 

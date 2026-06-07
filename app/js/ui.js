@@ -13,7 +13,6 @@ const UI = {
             livesDisplay: document.getElementById('lives-display'),
             phaseDisplay: document.getElementById('phase-display'),
             hintDisplay: document.getElementById('hint-display'),
-            timerDisplay: document.getElementById('timer-display'),
             difficultySelect: document.getElementById('difficulty-select'),
             highScoreDisplay: document.getElementById('high-score-display'),
             finalScoreDisplay: document.getElementById('final-score-display'),
@@ -152,21 +151,6 @@ const UI = {
         this._elements.hintDisplay.classList.add('hidden');
     },
 
-    updateTimer(seconds) {
-        const timerEl = this._elements.timerDisplay;
-        if (seconds > 0) {
-            timerEl.textContent = `⏱ ${seconds}s`;
-            timerEl.classList.remove('hidden');
-            if (seconds <= 10) {
-                timerEl.classList.add('warning');
-            } else {
-                timerEl.classList.remove('warning');
-            }
-        } else {
-            timerEl.classList.add('hidden');
-        }
-    },
-
     updatePowerUps() {
         const p = Player.powerUps;
         this._elements.powerUpsDisplay.innerHTML = `
@@ -175,9 +159,6 @@ const UI = {
             </button>
             <button class="powerup-btn life-btn" data-action="extraLife" ${p.extraLives === 0 ? 'disabled' : ''}>
                 ❤️ ${p.extraLives}
-            </button>
-            <button class="powerup-btn freeze-btn" data-action="freeze" ${p.freeze === 0 ? 'disabled' : ''}>
-                ❄️ ${p.freeze}
             </button>
         `;
     },

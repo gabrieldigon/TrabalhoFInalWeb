@@ -28,11 +28,6 @@ const Game = {
         UI.updateLives();
         UI.updatePhase();
         UI.updatePowerUps();
-        UI.updateTimer(Player.timeRemaining);
-
-        if (Player.timerActive) {
-            Player.startTimer(() => this._onTimeUp());
-        }
 
         UI.elements.powerUpsDisplay.addEventListener('click', (e) => {
             const btn = e.target.closest('.powerup-btn');
@@ -166,13 +161,6 @@ const Game = {
                     UI.showMessage('❤️ Vida extra!', 'success');
                 }
                 break;
-            case 'freeze':
-                if (Player.useFreeze()) {
-                    Sound.powerUp();
-                    UI.updateTimer(Player.timeRemaining);
-                    UI.showMessage('❄️ +30 segundos!', 'success');
-                }
-                break;
         }
         UI.updatePowerUps();
     },
@@ -234,20 +222,12 @@ const Game = {
     quit() {
         this._isPlaying = false;
         this._isPaused = false;
-        Player.stopTimer();
         UI.showPause(false);
         UI.showScreen('menu');
     },
 
-    _onTimeUp() {
-        if (!this._isPlaying) return;
-        UI.showMessage('⏱ Tempo esgotado!', 'error');
-        this._onLose();
-    },
-
     _onWin() {
         this._isPlaying = false;
-        Player.stopTimer();
         Keyboard.setDisabled(true);
 
         const points = Player.addScore();
@@ -261,7 +241,7 @@ const Game = {
             difficulty: Player.difficulty
         });
 
-        const powerUpTypes = ['hint', 'extraLife', 'freeze'];
+        const powerUpTypes = ['hint', 'extraLife'];
         const randomPowerUp = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
         Player.addPowerUpReward(randomPowerUp);
         UI.showMessage(`🎁 Power-up "${randomPowerUp}" ganho!`, 'success', 3000);
@@ -277,7 +257,6 @@ const Game = {
 
     _onLose() {
         this._isPlaying = false;
-        Player.stopTimer();
         Keyboard.setDisabled(true);
         Sound.defeat();
 
@@ -325,11 +304,6 @@ const Game = {
         UI.updateLives();
         UI.updatePhase();
         UI.updatePowerUps();
-        UI.updateTimer(Player.timeRemaining);
-
-        if (Player.timerActive) {
-            Player.startTimer(() => this._onTimeUp());
-        }
 
         UI.showMessage(`✨ Fase ${Player.phase}!`, 'success', 2000);
     },

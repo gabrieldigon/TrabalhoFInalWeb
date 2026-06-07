@@ -5,13 +5,9 @@ const Player = {
     _currentAttempt: 0,
     _maxAttempts: 6,
     _guesses: [],
-    _powerUps: { hints: 2, extraLives: 1, freeze: 1 },
+    _powerUps: { hints: 2, extraLives: 1 },
     _difficulty: 'medium',
     _wordLength: 5,
-    _timerActive: false,
-    _timeRemaining: 0,
-    _timerInterval: null,
-    _onTimerEnd: null,
 
     init(difficulty = 'medium', wordLength = 5) {
         this._difficulty = difficulty;
@@ -21,37 +17,29 @@ const Player = {
         this._currentAttempt = 0;
         this._maxAttempts = getMaxAttempts(difficulty);
         this._guesses = [];
-        this._timerActive = false;
-        this._timeRemaining = 0;
 
         switch (difficulty) {
             case 'easy':
-                this._powerUps = { hints: 3, extraLives: 2, freeze: 2 };
+                this._powerUps = { hints: 3, extraLives: 2 };
                 this._lives = 5;
                 break;
             case 'medium':
-                this._powerUps = { hints: 2, extraLives: 1, freeze: 1 };
+                this._powerUps = { hints: 2, extraLives: 1 };
                 this._lives = 3;
                 break;
             case 'hard':
-                this._powerUps = { hints: 1, extraLives: 0, freeze: 0 };
+                this._powerUps = { hints: 1, extraLives: 0 };
                 this._lives = 2;
                 break;
             default:
-                this._powerUps = { hints: 2, extraLives: 1, freeze: 1 };
+                this._powerUps = { hints: 2, extraLives: 1 };
                 this._lives = 3;
         }
 
         const savedPowerUps = Storage.getPowerUps();
         if (savedPowerUps) {
-            this._powerUps.hints += savedPowerUps.hints;
-            this._powerUps.extraLives += savedPowerUps.extraLives;
-            this._powerUps.freeze += savedPowerUps.freeze;
-        }
-
-        if (difficulty === 'hard') {
-            this._timerActive = true;
-            this._timeRemaining = 60;
+            this._powerUps.hints += savedPowerUps.hints || 0;
+            this._powerUps.extraLives += savedPowerUps.extraLives || 0;
         }
     },
 
@@ -63,10 +51,6 @@ const Player = {
 
         if (this._phase >= 3) {
             this._maxAttempts = Math.max(3, this._maxAttempts - 1);
-        }
-
-        if (this._difficulty === 'hard') {
-            this._timeRemaining = Math.max(30, 60 - (this._phase * 5));
         }
     },
 
@@ -116,48 +100,16 @@ const Player = {
         return false;
     },
 
-    useFreeze() {
-        if (this._powerUps.freeze > 0) {
-            this._powerUps.freeze--;
-            this._timeRemaining += 30;
-            this._savePowerUps();
-            return true;
-        }
-        return false;
-    },
-
-    startTimer(onEnd) {
-        if (!this._timerActive) return;
-        this._onTimerEnd = onEnd;
-
-        this._timerInterval = setInterval(() => {
-            this._timeRemaining--;
-            if (this._timeRemaining <= 0) {
-                this.stopTimer();
-                if (this._onTimerEnd) this._onTimerEnd();
-            }
-        }, 1000);
-    },
-
-    stopTimer() {
-        if (this._timerInterval) {
-            clearInterval(this._timerInterval);
-            this._timerInterval = null;
-        }
-    },
-
     _savePowerUps() {
         Storage.savePowerUps({
             hints: this._powerUps.hints,
-            extraLives: this._powerUps.extraLives,
-            freeze: this._powerUps.freeze
+            extraLives: this._powerUps.extraLives
         });
     },
 
     _powerUpKeyMap: {
         'hint': 'hints',
-        'extraLife': 'extraLives',
-        'freeze': 'freeze'
+        'extraLife': 'extraLives'
     },
 
     addPowerUpReward(type) {
@@ -176,7 +128,5 @@ const Player = {
     get guesses() { return [...this._guesses]; },
     get powerUps() { return { ...this._powerUps }; },
     get difficulty() { return this._difficulty; },
-    get wordLength() { return this._wordLength; },
-    get timeRemaining() { return this._timeRemaining; },
-    get timerActive() { return this._timerActive; }
+    get wordLength() { return this._wordLength; }
 };
