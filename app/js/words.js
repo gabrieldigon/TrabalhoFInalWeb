@@ -1,6 +1,4 @@
-// Banco de palavras - seleções da Copa do Mundo 2026
 const WORDS = {
-    // Fácil: 5 letras
     easy: [
         { word: 'BRASIL', hint: 'Maior vencedor da história (5 títulos)' },
         { word: 'FRANCA', hint: 'Campeã em 1998 e 2018' },
@@ -13,7 +11,6 @@ const WORDS = {
         { word: 'EGITO', hint: 'Seleção africana' },
         { word: 'SUICA', hint: 'País sede de Copas (1954)' },
     ],
-    // Médio: 6-7 letras
     medium: [
         { word: 'ALEMANHA', hint: '4 títulos mundiais' },
         { word: 'ARGENTINA', hint: 'Campeã em 2022' },
@@ -26,7 +23,6 @@ const WORDS = {
         { word: 'COLOMBIA', hint: 'Seleção sul-americana' },
         { word: 'POLONIA', hint: 'Seleção europeia' },
     ],
-    // Difícil: 8-9 letras
     hard: [
         { word: 'CROACIA', hint: 'Vice-campeã em 2018' },
         { word: 'BELGICA', hint: '3º lugar em 2018' },
@@ -41,7 +37,6 @@ const WORDS = {
     ]
 };
 
-// Palavras adicionais para fases avançadas com maior variedade
 const EXTRA_WORDS = [
     { word: 'EQUADOR', hint: 'País da linha do equador na América do Sul' },
     { word: 'TUNISIA', hint: 'Seleção norte-africana' },
@@ -55,35 +50,20 @@ const EXTRA_WORDS = [
     { word: 'PANAMA', hint: 'País da América Central' },
 ];
 
-/**
- * Retorna uma palavra aleatória baseada na dificuldade e fase
- * @param {string} difficulty - 'easy', 'medium', 'hard'
- * @param {number} phase - fase atual (incrementa dificuldade)
- * @returns {{ word: string, hint: string }}
- */
 function getRandomWord(difficulty, phase = 1) {
     let pool;
-
     if (phase >= 3) {
         pool = [...WORDS[difficulty], ...EXTRA_WORDS];
     } else {
         pool = WORDS[difficulty];
     }
-
-    // Em fases mais avançadas, podemos selecionar palavras maiores
     if (phase >= 2 && difficulty === 'easy') {
         pool = [...WORDS.easy, ...WORDS.medium];
     }
-
     const index = Math.floor(Math.random() * pool.length);
     return pool[index];
 }
 
-/**
- * Retorna o número máximo de tentativas baseado na dificuldade
- * @param {string} difficulty
- * @returns {number}
- */
 function getMaxAttempts(difficulty) {
     switch (difficulty) {
         case 'easy': return 8;

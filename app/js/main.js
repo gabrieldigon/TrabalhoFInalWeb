@@ -1,45 +1,24 @@
-// Módulo principal - entrada do jogo, controle de estados
-
 (function () {
     'use strict';
 
-    /**
-     * Inicializa o jogo
-     */
     function init() {
-        // Inicializa módulos
         UI.init();
         Sound.init();
 
-        // Verifica som
         const settings = Storage.getSettings();
         UI.updateSoundButton(settings.soundEnabled);
         UI.updateDifficultyLabel();
 
-        // Configura listeners do menu
         setupMenuListeners();
-
-        // Configura listeners do jogo
         setupGameListeners();
-
-        // Configura teclado físico
         setupPhysicalKeyboard();
-
-        // Configura listeners de pause
         setupPauseListeners();
-
-        // Configura listeners do fim de jogo
         setupGameOverListeners();
 
-        // Mostra tela de menu
         UI.showScreen('menu');
     }
 
-    /**
-     * Configura eventos do menu inicial
-     */
     function setupMenuListeners() {
-        // Botão de dificuldade (ciclo)
         const diffBtn = document.getElementById('difficulty-select');
         if (diffBtn) {
             diffBtn.addEventListener('click', () => {
@@ -55,7 +34,6 @@
             diffBtn.textContent = 'Dificuldade: Médio';
         }
 
-        // Botão iniciar jogo
         const startBtn = document.getElementById('start-btn');
         if (startBtn) {
             startBtn.addEventListener('click', () => {
@@ -65,7 +43,6 @@
             });
         }
 
-        // Botão de som no menu
         const soundBtn = document.getElementById('sound-btn');
         if (soundBtn) {
             soundBtn.addEventListener('click', () => {
@@ -74,7 +51,6 @@
             });
         }
 
-        // Botão de histórico
         const historyBtn = document.getElementById('history-btn');
         if (historyBtn) {
             historyBtn.addEventListener('click', () => {
@@ -84,11 +60,7 @@
         }
     }
 
-    /**
-     * Configura eventos da tela de jogo
-     */
     function setupGameListeners() {
-        // Botão de pause
         const pauseBtn = document.getElementById('pause-btn');
         if (pauseBtn) {
             pauseBtn.addEventListener('click', () => {
@@ -97,14 +69,12 @@
             });
         }
 
-        // Teclado virtual
         Keyboard.create(document.getElementById('keyboard-container'), {
             onKeyPress: (letter) => Game.onKeyPress(letter),
             onEnter: () => Game.onEnter(),
             onBackspace: () => Game.onBackspace()
         });
 
-        // Botão de som na tela de jogo
         const soundBtn = document.getElementById('game-sound-btn');
         if (soundBtn) {
             soundBtn.addEventListener('click', () => {
@@ -114,25 +84,18 @@
             });
             soundBtn.textContent = Sound._enabled ? '🔊' : '🔇';
         }
-
     }
 
-    /**
-     * Configura eventos do teclado físico
-     */
     function setupPhysicalKeyboard() {
         document.addEventListener('keydown', (e) => {
-            // Ignora se estiver digitando em inputs
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
             const key = e.key.toUpperCase();
 
-            // Previne scroll com espaço
             if (e.key === ' ' || e.key === 'Space') {
                 e.preventDefault();
             }
 
-            // Ignora se overlay de pause estiver ativo
             const pauseOverlay = document.getElementById('pause-overlay');
             const isPaused = pauseOverlay && !pauseOverlay.classList.contains('hidden');
 
@@ -158,7 +121,6 @@
                     Game.togglePause();
                     break;
                 default:
-                    // Letras de A-Z
                     if (key.length === 1 && /^[A-ZÁÉÍÓÚÃÕÂÊ]$/i.test(key)) {
                         e.preventDefault();
                         Game.onKeyPress(key);
@@ -168,13 +130,9 @@
         });
     }
 
-    /**
-     * Configura eventos do overlay de pause
-     */
     function setupPauseListeners() {
         const overlay = document.getElementById('pause-overlay');
 
-        // Botão continuar
         const resumeBtn = overlay ? overlay.querySelector('#resume-btn') : null;
         if (resumeBtn) {
             resumeBtn.addEventListener('click', () => {
@@ -183,7 +141,6 @@
             });
         }
 
-        // Botão desistir
         const quitBtn = overlay ? overlay.querySelector('#quit-btn') : null;
         if (quitBtn) {
             quitBtn.addEventListener('click', () => {
@@ -193,11 +150,7 @@
         }
     }
 
-    /**
-     * Configura eventos da tela de fim de jogo
-     */
     function setupGameOverListeners() {
-        // Botão jogar novamente
         const restartBtn = document.getElementById('restart-btn');
         if (restartBtn) {
             restartBtn.addEventListener('click', () => {
@@ -207,7 +160,6 @@
             });
         }
 
-        // Botão menu
         const menuBtn = document.getElementById('menu-btn');
         if (menuBtn) {
             menuBtn.addEventListener('click', () => {
@@ -217,9 +169,6 @@
         }
     }
 
-    /**
-     * Mostra o histórico de jogos
-     */
     function showHistory() {
         const history = Storage.getHistory();
         const overlay = document.createElement('div');
@@ -254,7 +203,6 @@
         });
     }
 
-    // Inicializa quando o DOM estiver pronto
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

@@ -1,5 +1,3 @@
-// Módulo de armazenamento local (localStorage)
-
 const STORAGE_KEYS = {
     HIGH_SCORE: 'copa2026_highScore',
     HISTORY: 'copa2026_history',
@@ -9,10 +7,6 @@ const STORAGE_KEYS = {
 };
 
 const Storage = {
-    /**
-     * Salva a pontuação mais alta
-     * @param {number} score
-     */
     saveHighScore(score) {
         const currentHigh = this.getHighScore();
         if (score > currentHigh) {
@@ -20,17 +14,12 @@ const Storage = {
                 localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, score.toString());
                 return true;
             } catch (e) {
-                console.warn('localStorage não disponível');
                 return false;
             }
         }
         return false;
     },
 
-    /**
-     * Recupera a pontuação mais alta
-     * @returns {number}
-     */
     getHighScore() {
         try {
             const val = localStorage.getItem(STORAGE_KEYS.HIGH_SCORE);
@@ -40,10 +29,6 @@ const Storage = {
         }
     },
 
-    /**
-     * Adiciona uma tentativa ao histórico
-     * @param {object} entry - { word, attempts, guessed, score, date }
-     */
     addHistoryEntry(entry) {
         try {
             const history = this.getHistory();
@@ -51,18 +36,11 @@ const Storage = {
                 ...entry,
                 date: new Date().toISOString()
             });
-            // Mantém apenas os últimos 20 registros
             const trimmed = history.slice(0, 20);
             localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(trimmed));
-        } catch (e) {
-            console.warn('Não foi possível salvar histórico');
-        }
+        } catch (e) {}
     },
 
-    /**
-     * Recupera o histórico de jogos
-     * @returns {Array}
-     */
     getHistory() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.HISTORY);
@@ -72,22 +50,12 @@ const Storage = {
         }
     },
 
-    /**
-     * Salva configurações do jogo
-     * @param {object} settings
-     */
     saveSettings(settings) {
         try {
             localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-        } catch (e) {
-            console.warn('Não foi possível salvar configurações');
-        }
+        } catch (e) {}
     },
 
-    /**
-     * Recupera configurações salvas
-     * @returns {object}
-     */
     getSettings() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
@@ -97,22 +65,12 @@ const Storage = {
         }
     },
 
-    /**
-     * Salva power-ups disponíveis
-     * @param {object} powerUps - { hints: number, extraLives: number, freeze: number }
-     */
     savePowerUps(powerUps) {
         try {
             localStorage.setItem(STORAGE_KEYS.POWER_UPS, JSON.stringify(powerUps));
-        } catch (e) {
-            console.warn('Não foi possível salvar power-ups');
-        }
+        } catch (e) {}
     },
 
-    /**
-     * Recupera power-ups salvos
-     * @returns {object}
-     */
     getPowerUps() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.POWER_UPS);
@@ -122,16 +80,11 @@ const Storage = {
         }
     },
 
-    /**
-     * Limpa todos os dados salvos (exceto configurações)
-     */
     clearGameData() {
         try {
             localStorage.removeItem(STORAGE_KEYS.HIGH_SCORE);
             localStorage.removeItem(STORAGE_KEYS.HISTORY);
             localStorage.removeItem(STORAGE_KEYS.GAME_STATE);
-        } catch (e) {
-            console.warn('Não foi possível limpar dados');
-        }
+        } catch (e) {}
     }
 };

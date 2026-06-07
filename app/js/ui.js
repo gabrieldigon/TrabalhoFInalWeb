@@ -1,11 +1,6 @@
-// Módulo de interface - manipulação do DOM
-
 const UI = {
     _elements: {},
 
-    /**
-     * Inicializa referências aos elementos DOM
-     */
     init() {
         this._elements = {
             menuScreen: document.getElementById('menu-screen'),
@@ -31,10 +26,6 @@ const UI = {
         };
     },
 
-    /**
-     * Mostra uma tela específica, esconde as outras
-     * @param {string} screen - 'menu', 'game', 'gameover'
-     */
     showScreen(screen) {
         const { menuScreen, gameScreen, gameOverScreen } = this._elements;
         menuScreen.classList.add('hidden');
@@ -54,11 +45,6 @@ const UI = {
         }
     },
 
-    /**
-     * Cria a grade de letras baseada no tamanho da palavra e tentativas
-     * @param {number} wordLength
-     * @param {number} maxAttempts
-     */
     createGrid(wordLength, maxAttempts) {
         const container = this._elements.gridContainer;
         container.innerHTML = '';
@@ -81,12 +67,6 @@ const UI = {
         }
     },
 
-    /**
-     * Preenche uma linha da grade com letras
-     * @param {number} rowIndex
-     * @param {string} word
-     * @param {Array} results - Array de estados: 'correct', 'misplaced', 'wrong'
-     */
     fillRow(rowIndex, word, results) {
         const cells = this._elements.gridContainer.querySelectorAll(`.grid-row[data-row="${rowIndex}"] .grid-cell`);
 
@@ -97,13 +77,11 @@ const UI = {
             cell.textContent = letter;
             cell.classList.add('pop');
 
-            // Animação com delay
             setTimeout(() => {
                 cell.classList.remove('pop');
                 cell.classList.add('flip');
                 cell.classList.add(state);
 
-                // Sons por letra
                 if (state === 'correct') Sound.correctLetter();
                 else if (state === 'misplaced') Sound.misplacedLetter();
                 else Sound.wrongLetter();
@@ -115,12 +93,6 @@ const UI = {
         });
     },
 
-    /**
-     * Preenche letras temporárias na linha atual (enquanto digita)
-     * @param {number} rowIndex
-     * @param {string} currentGuess
-     * @param {number} wordLength
-     */
     updateCurrentRow(rowIndex, currentGuess, wordLength) {
         const cells = this._elements.gridContainer.querySelectorAll(`.grid-row[data-row="${rowIndex}"] .grid-cell`);
 
@@ -134,10 +106,6 @@ const UI = {
         });
     },
 
-    /**
-     * Mostra animação de erro (shake) em uma linha
-     * @param {number} rowIndex
-     */
     shakeRow(rowIndex) {
         const row = this._elements.gridContainer.querySelector(`.grid-row[data-row="${rowIndex}"]`);
         if (!row) return;
@@ -146,12 +114,6 @@ const UI = {
         setTimeout(() => row.classList.remove('shake'), 500);
     },
 
-    /**
-     * Mostra mensagem temporária
-     * @param {string} message
-     * @param {string} type - 'error', 'info', 'success'
-     * @param {number} duration
-     */
     showMessage(message, type = 'info', duration = 2000) {
         const msgEl = this._elements.messageDisplay;
         msgEl.textContent = message;
@@ -164,16 +126,10 @@ const UI = {
         }, duration);
     },
 
-    /**
-     * Atualiza a exibição do placar
-     */
     updateScore() {
         this._elements.scoreDisplay.textContent = `Pontos: ${Player.score}`;
     },
 
-    /**
-     * Atualiza a exibição das vidas
-     */
     updateLives() {
         const lives = Player.lives;
         let hearts = '';
@@ -183,33 +139,19 @@ const UI = {
         this._elements.livesDisplay.textContent = hearts || '💀';
     },
 
-    /**
-     * Atualiza a exibição da fase
-     */
     updatePhase() {
         this._elements.phaseDisplay.textContent = `Fase ${Player.phase}`;
     },
 
-    /**
-     * Atualiza a exibição da dica
-     * @param {string} hint
-     */
     updateHint(hint) {
         this._elements.hintDisplay.textContent = `Dica: ${hint}`;
         this._elements.hintDisplay.classList.remove('hidden');
     },
 
-    /**
-     * Esconde a dica
-     */
     hideHint() {
         this._elements.hintDisplay.classList.add('hidden');
     },
 
-    /**
-     * Atualiza a exibição do timer
-     * @param {number} seconds
-     */
     updateTimer(seconds) {
         const timerEl = this._elements.timerDisplay;
         if (seconds > 0) {
@@ -225,9 +167,6 @@ const UI = {
         }
     },
 
-    /**
-     * Atualiza a exibição dos power-ups
-     */
     updatePowerUps() {
         const p = Player.powerUps;
         this._elements.powerUpsDisplay.innerHTML = `
@@ -243,12 +182,6 @@ const UI = {
         `;
     },
 
-    /**
-     * Atualiza a tela de fim de jogo
-     * @param {boolean} won
-     * @param {string} word
-     * @param {number} score
-     */
     showGameOver(won, word, score) {
         this.showScreen('gameover');
         this._elements.resultTitle.textContent = won ? '🎉 Parabéns!' : '😞 Fim de Jogo';
@@ -264,25 +197,14 @@ const UI = {
         }
     },
 
-    /**
-     * Mostra/esconde o overlay de pausa
-     * @param {boolean} show
-     */
     showPause(show) {
         this._elements.pauseOverlay.classList.toggle('hidden', !show);
     },
 
-    /**
-     * Alterna o ícone do botão de som
-     * @param {boolean} enabled
-     */
     updateSoundButton(enabled) {
         this._elements.soundBtn.textContent = enabled ? '🔊' : '🔇';
     },
 
-    /**
-     * Atualiza o botão de dificuldade no menu
-     */
     updateDifficultyLabel() {
         const select = this._elements.difficultySelect;
         if (select) {
@@ -291,8 +213,5 @@ const UI = {
         }
     },
 
-    /**
-     * Obtém os elementos
-     */
     get elements() { return this._elements; }
 };

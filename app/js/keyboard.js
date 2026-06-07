@@ -1,25 +1,17 @@
-// Módulo do teclado virtual
-
 const Keyboard = {
     _container: null,
     _keys: {},
-    _keyStates: {}, // 'correct', 'misplaced', 'wrong', ''
+    _keyStates: {},
     _onKeyPress: null,
     _onEnter: null,
     _onBackspace: null,
 
-    // Layout do teclado (linhas)
     _layout: [
         ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
         ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
         ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
     ],
 
-    /**
-     * Cria o teclado virtual no container
-     * @param {HTMLElement} container
-     * @param {object} callbacks - { onKeyPress, onEnter, onBackspace }
-     */
     create(container, callbacks = {}) {
         this._container = container;
         this._onKeyPress = callbacks.onKeyPress || (() => {});
@@ -35,7 +27,6 @@ const Keyboard = {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'keyboard-row';
 
-            // Adiciona botão Backspace no início da linha 2, Enter no final da linha 3
             if (row === this._layout[1]) {
                 const backBtn = this._createKey('⌫', 'key-backspace');
                 backBtn.addEventListener('click', (e) => {
@@ -71,12 +62,6 @@ const Keyboard = {
         });
     },
 
-    /**
-     * Cria um botão de tecla
-     * @param {string} label
-     * @param {string} className
-     * @returns {HTMLElement}
-     */
     _createKey(label, className) {
         const btn = document.createElement('button');
         btn.className = `key ${className}`;
@@ -85,16 +70,9 @@ const Keyboard = {
         return btn;
     },
 
-    /**
-     * Atualiza o estado de uma tecla (cor)
-     * @param {string} letter
-     * @param {string} state - 'correct', 'misplaced', 'wrong'
-     */
     setKeyState(letter, state) {
         if (!this._keys[letter]) return;
 
-        // Não sobrescreve estados de maior prioridade
-        // Prioridade: correct > misplaced > wrong
         const currentState = this._keyStates[letter];
         const priority = { correct: 3, misplaced: 2, wrong: 1 };
         const currentPriority = priority[currentState] || 0;
@@ -102,7 +80,6 @@ const Keyboard = {
 
         if (newPriority <= currentPriority) return;
 
-        // Remove estado anterior
         this._keys[letter].className = 'key key-letter';
         this._keyStates[letter] = state;
 
@@ -119,9 +96,6 @@ const Keyboard = {
         }
     },
 
-    /**
-     * Reseta todas as teclas ao estado inicial
-     */
     reset() {
         Object.keys(this._keys).forEach(letter => {
             this._keys[letter].className = 'key key-letter';
@@ -129,10 +103,6 @@ const Keyboard = {
         this._keyStates = {};
     },
 
-    /**
-     * Desabilita/habilita o teclado
-     * @param {boolean} disabled
-     */
     setDisabled(disabled) {
         const buttons = this._container.querySelectorAll('button');
         buttons.forEach(btn => {

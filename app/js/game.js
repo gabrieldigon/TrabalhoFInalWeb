@@ -1,5 +1,3 @@
-// Módulo principal do jogo - lógica central
-
 const Game = {
     _currentWord: null,
     _currentHint: null,
@@ -9,10 +7,6 @@ const Game = {
     _isChecking: false,
     _usedHints: 0,
 
-    /**
-     * Inicia uma nova partida
-     * @param {string} difficulty
-     */
     start(difficulty) {
         const wordData = getRandomWord(difficulty, 1);
         this._currentWord = wordData.word.toUpperCase();
@@ -25,7 +19,6 @@ const Game = {
 
         Player.init(difficulty, this._currentWord.length);
 
-        // Configura a interface
         UI.createGrid(this._currentWord.length, Player.maxAttempts);
         Keyboard.reset();
         Keyboard.setDisabled(false);
@@ -37,12 +30,10 @@ const Game = {
         UI.updatePowerUps();
         UI.updateTimer(Player.timeRemaining);
 
-        // Inicia timer no modo difícil
         if (Player.timerActive) {
             Player.startTimer(() => this._onTimeUp());
         }
 
-        // Adiciona listeners de power-ups
         UI.elements.powerUpsDisplay.addEventListener('click', (e) => {
             const btn = e.target.closest('.powerup-btn');
             if (btn && !btn.disabled) {
@@ -52,10 +43,6 @@ const Game = {
         });
     },
 
-    /**
-     * Manipula uma letra pressionada
-     * @param {string} letter
-     */
     onKeyPress(letter) {
         if (!this._isPlaying || this._isPaused || this._isChecking) return;
 
@@ -66,9 +53,6 @@ const Game = {
         }
     },
 
-    /**
-     * Manipula o backspace
-     */
     onBackspace() {
         if (!this._isPlaying || this._isPaused || this._isChecking) return;
 
@@ -78,16 +62,12 @@ const Game = {
         }
     },
 
-    /**
-     * Manipula o Enter (envia a tentativa)
-     */
     onEnter() {
         if (!this._isPlaying || this._isPaused || this._isChecking) return;
 
         const guess = this._currentGuess;
         const wordLen = this._currentWord.length;
 
-        // Validações
         if (guess.length !== wordLen) {
             UI.showMessage(`A palavra tem ${wordLen} letras!`, 'error');
             UI.shakeRow(Player.currentAttempt);
@@ -103,20 +83,17 @@ const Game = {
         this._isChecking = true;
         Keyboard.setDisabled(true);
 
-        // Processa a tentativa
         const results = this._evaluateGuess(guess);
         const currentRow = Player.currentAttempt;
 
         UI.fillRow(currentRow, guess, results);
 
-        // Atualiza teclado
         guess.split('').forEach((letter, i) => {
             Keyboard.setKeyState(letter, results[i]);
         });
 
         Player.addGuess(guess);
 
-        // Verifica resultado após animação
         setTimeout(() => {
             this._isChecking = false;
             Keyboard.setDisabled(false);
@@ -128,7 +105,6 @@ const Game = {
             } else if (!Player.canAttempt()) {
                 this._onLose();
             } else {
-                // Perde vida se errou completamente
                 const allWrong = results.every(r => r === 'wrong');
                 if (allWrong) {
                     Player.loseLife();
@@ -147,24 +123,17 @@ const Game = {
         }, guess.length * 200 + 600);
     },
 
-    /**
-     * Avalia a tentativa contra a palavra correta
-     * @param {string} guess
-     * @returns {Array} Array de estados
-     */
     _evaluateGuess(guess) {
         const target = this._currentWord;
         const targetArr = target.split('');
         const guessArr = guess.split('');
         const result = new Array(guess.length).fill('wrong');
 
-        // Conta letras disponíveis
         const letterCount = {};
         targetArr.forEach(letter => {
             letterCount[letter] = (letterCount[letter] || 0) + 1;
         });
 
-        // Primeira passada: letras exatas
         guessArr.forEach((letter, i) => {
             if (letter === targetArr[i]) {
                 result[i] = 'correct';
@@ -172,7 +141,6 @@ const Game = {
             }
         });
 
-        // Segunda passada: letras deslocadas
         guessArr.forEach((letter, i) => {
             if (result[i] !== 'correct' && letterCount[letter] > 0) {
                 result[i] = 'misplaced';
@@ -183,10 +151,6 @@ const Game = {
         return result;
     },
 
-    /**
-     * Usa um power-up
-     * @param {string} action
-     */
     _usePowerUp(action) {
         switch (action) {
             case 'hint':
@@ -213,15 +177,11 @@ const Game = {
         UI.updatePowerUps();
     },
 
-    /**
-     * Revela uma letra como dica
-     */
     _revealHint() {
         const target = this._currentWord;
         const guesses = Player.guesses;
         const guessedLetters = guesses.join('').split('');
 
-        // Encontra letras não descobertas
         const unrevealed = target.split('').filter(l => !guessedLetters.includes(l));
 
         if (unrevealed.length === 0) {
@@ -229,14 +189,11 @@ const Game = {
             return;
         }
 
-        // Escolhe uma letra aleatória não descoberta
         const randomLetter = unrevealed[Math.floor(Math.random() * unrevealed.length)];
 
-        // Encontra a primeira posição não acertada da letra
         let hintIndex = -1;
         for (let i = 0; i < target.length; i++) {
             if (target[i] === randomLetter) {
-                // Verifica se essa posição já está correta em tentativas anteriores
                 const isAlreadyCorrect = guesses.some(g => g[i] === randomLetter);
                 if (!isAlreadyCorrect) {
                     hintIndex = i;
@@ -258,8 +215,6 @@ const Game = {
                 Keyboard.setKeyState(randomLetter, 'correct');
             }
 
-            // Atualiza o palpite atual
-            // Preenche a letra revelada no guess atual
             this._currentGuess = this._currentGuess.padEnd(hintIndex + 1, ' ');
             const guessArr = this._currentGuess.split('');
             guessArr[hintIndex] = randomLetter;
@@ -270,18 +225,12 @@ const Game = {
         }
     },
 
-    /**
-     * Alterna pausa
-     */
     togglePause() {
         this._isPaused = !this._isPaused;
         UI.showPause(this._isPaused);
         Keyboard.setDisabled(this._isPaused);
     },
 
-    /**
-     * Cancela uma partida (volta ao menu)
-     */
     quit() {
         this._isPlaying = false;
         this._isPaused = false;
@@ -290,18 +239,12 @@ const Game = {
         UI.showScreen('menu');
     },
 
-    /**
-     * Quando o tempo acaba (modo difícil)
-     */
     _onTimeUp() {
         if (!this._isPlaying) return;
         UI.showMessage('⏱ Tempo esgotado!', 'error');
         this._onLose();
     },
 
-    /**
-     * Quando o jogador vence
-     */
     _onWin() {
         this._isPlaying = false;
         Player.stopTimer();
@@ -318,13 +261,11 @@ const Game = {
             difficulty: Player.difficulty
         });
 
-        // Recompensa com power-up aleatório
         const powerUpTypes = ['hint', 'extraLife', 'freeze'];
         const randomPowerUp = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
         Player.addPowerUpReward(randomPowerUp);
         UI.showMessage(`🎁 Power-up "${randomPowerUp}" ganho!`, 'success', 3000);
 
-        // Avança de fase ou termina
         setTimeout(() => {
             if (Player.phase >= 3) {
                 UI.showGameOver(true, this._currentWord, Player.score);
@@ -334,9 +275,6 @@ const Game = {
         }, 2000);
     },
 
-    /**
-     * Quando o jogador perde
-     */
     _onLose() {
         this._isPlaying = false;
         Player.stopTimer();
@@ -356,13 +294,12 @@ const Game = {
         }, 1500);
     },
 
-    /**
-     * Próxima rodada (avança fase)
-     */
     _nextRound() {
         const difficulty = Player.difficulty;
 
-        // Aumenta tamanho da palavra conforme dificuldade
+        this._isPlaying = true;
+        this._isChecking = false;
+
         let newLength;
         if (difficulty === 'easy') {
             newLength = 5 + Player.phase;
@@ -397,9 +334,6 @@ const Game = {
         UI.showMessage(`✨ Fase ${Player.phase}!`, 'success', 2000);
     },
 
-    /**
-     * Retorna o estado atual do jogo
-     */
     get state() {
         return {
             word: this._currentWord,

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- TELA DE MENU -->
     <div id="menu-screen" class="screen">
         <div class="menu-content">
             <h1 class="game-title">🏆 Wordle Copa 2026</h1>
@@ -29,9 +28,7 @@
         </div>
     </div>
 
-    <!-- TELA DE JOGO -->
     <div id="game-screen" class="screen hidden">
-        <!-- Header do jogo -->
         <div class="game-header">
             <div class="header-left">
                 <span id="lives-display">❤️❤️❤️</span>
@@ -49,17 +46,11 @@
             </div>
         </div>
 
-        <!-- Mensagens -->
         <div id="message-display" class="message hidden"></div>
-
-        <!-- Grade do jogo -->
         <div id="grid-container" class="grid-container"></div>
-
-        <!-- Teclado virtual -->
         <div id="keyboard-container" class="keyboard-container"></div>
     </div>
 
-    <!-- TELA DE FIM DE JOGO -->
     <div id="gameover-screen" class="screen hidden">
         <div class="gameover-content">
             <h1 id="gameover-title">🎉 Parabéns!</h1>
@@ -75,7 +66,6 @@
         </div>
     </div>
 
-    <!-- OVERLAY DE PAUSA -->
     <div id="pause-overlay" class="overlay hidden">
         <div class="pause-content">
             <h2>⏸ Jogo Pausado</h2>
@@ -86,7 +76,6 @@
         </div>
     </div>
 
-    <!-- Scripts (ordem de dependência) -->
     <script src="js/words.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/sound.js"></script>

@@ -1,5 +1,3 @@
-// Módulo do jogador - vidas, pontuação, progresso e power-ups
-
 const Player = {
     _lives: 3,
     _score: 0,
@@ -15,11 +13,6 @@ const Player = {
     _timerInterval: null,
     _onTimerEnd: null,
 
-    /**
-     * Inicializa ou reinicia o jogador
-     * @param {string} difficulty
-     * @param {number} wordLength
-     */
     init(difficulty = 'medium', wordLength = 5) {
         this._difficulty = difficulty;
         this._wordLength = wordLength;
@@ -31,7 +24,6 @@ const Player = {
         this._timerActive = false;
         this._timeRemaining = 0;
 
-        // Power-ups iniciais baseados na dificuldade
         switch (difficulty) {
             case 'easy':
                 this._powerUps = { hints: 3, extraLives: 2, freeze: 2 };
@@ -50,7 +42,6 @@ const Player = {
                 this._lives = 3;
         }
 
-        // Adiciona power-ups salvos anteriormente
         const savedPowerUps = Storage.getPowerUps();
         if (savedPowerUps) {
             this._powerUps.hints += savedPowerUps.hints;
@@ -58,79 +49,49 @@ const Player = {
             this._powerUps.freeze += savedPowerUps.freeze;
         }
 
-        // Configura timer para dificuldade difícil
         if (difficulty === 'hard') {
             this._timerActive = true;
-            this._timeRemaining = 60; // 60 segundos
+            this._timeRemaining = 60;
         }
     },
 
-    /**
-     * Avança para a próxima fase
-     * @param {number} wordLength - Novo comprimento da palavra
-     */
     nextPhase(wordLength) {
         this._phase++;
         this._currentAttempt = 0;
         this._guesses = [];
         this._wordLength = wordLength;
 
-        // Diminui tentativas com o avanço das fases
         if (this._phase >= 3) {
             this._maxAttempts = Math.max(3, this._maxAttempts - 1);
         }
 
-        // Aumenta dificuldade: reduz tempo em modo hard
         if (this._difficulty === 'hard') {
             this._timeRemaining = Math.max(30, 60 - (this._phase * 5));
         }
     },
 
-    /**
-     * Registra uma tentativa
-     * @param {string} guess - Palavra tentada
-     * @returns {number} - Número de tentativa atual
-     */
     addGuess(guess) {
         this._guesses.push(guess);
         this._currentAttempt++;
         return this._currentAttempt;
     },
 
-    /**
-     * Verifica se o jogador ainda pode tentar
-     * @returns {boolean}
-     */
     canAttempt() {
         return this._currentAttempt < this._maxAttempts && this._lives > 0;
     },
 
-    /**
-     * Perde uma vida
-     * @returns {number} - Vidas restantes
-     */
     loseLife() {
         this._lives = Math.max(0, this._lives - 1);
         return this._lives;
     },
 
-    /**
-     * Ganha uma vida extra (power-up)
-     * @returns {number} - Vidas atuais
-     */
     gainLife() {
         this._lives++;
         this._powerUps.extraLives--;
         return this._lives;
     },
 
-    /**
-     * Adiciona pontos baseado na tentativa atual
-     * @param {number} basePoints - Pontos base por acerto
-     * @returns {number} - Pontos ganhos
-     */
     addScore(basePoints = 100) {
-        // Mais pontos por acertar rápido
         const attemptBonus = Math.max(10, 100 - (this._currentAttempt * 15));
         const phaseMultiplier = this._phase;
         const points = Math.floor((basePoints + attemptBonus) * phaseMultiplier);
@@ -138,10 +99,6 @@ const Player = {
         return points;
     },
 
-    /**
-     * Usa o power-up de dica
-     * @returns {boolean} - Se conseguiu usar
-     */
     useHint() {
         if (this._powerUps.hints > 0) {
             this._powerUps.hints--;
@@ -151,10 +108,6 @@ const Player = {
         return false;
     },
 
-    /**
-     * Usa o power-up de vida extra
-     * @returns {boolean} - Se conseguiu usar
-     */
     useExtraLife() {
         if (this._powerUps.extraLives > 0) {
             this.gainLife();
@@ -163,10 +116,6 @@ const Player = {
         return false;
     },
 
-    /**
-     * Usa o power-up de freeze (adiciona tempo em modo difícil)
-     * @returns {boolean} - Se conseguiu usar
-     */
     useFreeze() {
         if (this._powerUps.freeze > 0) {
             this._powerUps.freeze--;
@@ -177,10 +126,6 @@ const Player = {
         return false;
     },
 
-    /**
-     * Inicia o timer (apenas modo difícil)
-     * @param {function} onEnd - Callback quando o tempo acabar
-     */
     startTimer(onEnd) {
         if (!this._timerActive) return;
         this._onTimerEnd = onEnd;
@@ -194,9 +139,6 @@ const Player = {
         }, 1000);
     },
 
-    /**
-     * Para o timer
-     */
     stopTimer() {
         if (this._timerInterval) {
             clearInterval(this._timerInterval);
@@ -204,9 +146,6 @@ const Player = {
         }
     },
 
-    /**
-     * Salva power-ups no localStorage
-     */
     _savePowerUps() {
         Storage.savePowerUps({
             hints: this._powerUps.hints,
@@ -215,19 +154,12 @@ const Player = {
         });
     },
 
-    /**
-     * Mapeamento de tipo de power-up para chave no objeto
-     */
     _powerUpKeyMap: {
         'hint': 'hints',
         'extraLife': 'extraLives',
         'freeze': 'freeze'
     },
 
-    /**
-     * Adiciona power-up como recompensa
-     * @param {string} type - Tipo de power-up ('hint', 'extraLife', 'freeze')
-     */
     addPowerUpReward(type) {
         const key = this._powerUpKeyMap[type];
         if (key && this._powerUps[key] !== undefined) {
@@ -236,9 +168,6 @@ const Player = {
         }
     },
 
-    /**
-     * Getters
-     */
     get lives() { return this._lives; },
     get score() { return this._score; },
     get phase() { return this._phase; },
