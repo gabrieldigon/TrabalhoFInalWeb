@@ -94,13 +94,17 @@ const UI = {
 
     updateCurrentRow(rowIndex, currentGuess, wordLength) {
         const cells = this._elements.gridContainer.querySelectorAll(`.grid-row[data-row="${rowIndex}"] .grid-cell`);
+        const hintCells = this._elements.gridContainer.querySelectorAll(`.grid-row[data-row="${rowIndex}"] .grid-cell.hint-revealed`);
+        const hintPositions = new Set();
+        hintCells.forEach(c => hintPositions.add(parseInt(c.dataset.col)));
 
         cells.forEach((cell, col) => {
-            cell.textContent = col < currentGuess.length ? currentGuess[col] : '';
-            if (col < currentGuess.length) {
-                cell.classList.add('filled');
-            } else {
-                cell.classList.remove('filled');
+            if (!hintPositions.has(col)) {
+                cell.textContent = col < currentGuess.length ? currentGuess[col] : '';
+                cell.className = 'grid-cell';
+                if (col < currentGuess.length) {
+                    cell.classList.add('filled');
+                }
             }
         });
     },

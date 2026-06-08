@@ -1,21 +1,23 @@
 const Game = {
     _currentWord: null,
     _currentHint: null,
-    _currentGuess: '',
+    _currentGuess: [],
     _isPlaying: false,
     _isPaused: false,
     _isChecking: false,
     _usedHints: 0,
+    _hintPositions: [],
 
     start(difficulty) {
         const wordData = getRandomWord(difficulty, 1);
         this._currentWord = wordData.word.toUpperCase();
         this._currentHint = wordData.hint;
-        this._currentGuess = '';
+        this._currentGuess = [];
         this._isPlaying = true;
         this._isPaused = false;
         this._isChecking = false;
         this._usedHints = 0;
+        this._hintPositions = [];
 
         Player.init(difficulty, this._currentWord.length);
 
@@ -38,40 +40,70 @@ const Game = {
         });
     },
 
+    _renderRow() {
+        const rowIndex = Player.currentAttempt;
+        const cells = document.querySelectorAll(`.grid-row[data-row="${rowIndex}"] .grid-cell`);
+        const wordLen = this._currentWord.length;
+
+        const typed = [...this._currentGuess];
+        for (const pos of this._hintPositions) {
+            cells[pos].textContent = this._currentWord[pos];
+            cells[pos].className = 'grid-cell correct hint-revealed';
+        }
+
+        let hintPos = 0;
+        let typedPos = 0;
+        for (let i = 0; i < wordLen; i++) {
+            if (this._hintPositions.includes(i)) continue;
+            if (typedPos < typed.length) {
+                cells[i].textContent = typed[typedPos];
+                cells[i].className = 'grid-cell filled';
+                typedPos++;
+            } else {
+                cells[i].textContent = '';
+                cells[i].className = 'grid-cell';
+            }
+        }
+    },
+
     onKeyPress(letter) {
         if (!this._isPlaying || this._isPaused || this._isChecking) return;
-
-        const wordLen = this._currentWord.length;
-        if (this._currentGuess.length < wordLen) {
-            this._currentGuess += letter;
-            UI.updateCurrentRow(Player.currentAttempt, this._currentGuess, wordLen);
+        if (this._currentGuess.length + this._hintPositions.length < this._currentWord.length) {
+            this._currentGuess.push(letter);
+            this._renderRow();
         }
     },
 
     onBackspace() {
         if (!this._isPlaying || this._isPaused || this._isChecking) return;
-
         if (this._currentGuess.length > 0) {
-            this._currentGuess = this._currentGuess.slice(0, -1);
-            UI.updateCurrentRow(Player.currentAttempt, this._currentGuess, this._currentWord.length);
+            this._currentGuess.pop();
+            this._renderRow();
         }
+    },
+
+    _buildGuessString() {
+        const parts = [];
+        let typedIdx = 0;
+        for (let i = 0; i < this._currentWord.length; i++) {
+            if (this._hintPositions.includes(i)) {
+                parts.push(this._currentWord[i]);
+            } else if (typedIdx < this._currentGuess.length) {
+                parts.push(this._currentGuess[typedIdx]);
+                typedIdx++;
+            }
+        }
+        return parts.join('');
     },
 
     onEnter() {
         if (!this._isPlaying || this._isPaused || this._isChecking) return;
 
-        const guess = this._currentGuess;
+        const guess = this._buildGuessString();
         const wordLen = this._currentWord.length;
 
-        if (guess.length !== wordLen) {
+        if (this._currentGuess.length + this._hintPositions.length !== wordLen) {
             UI.showMessage(`A palavra tem ${wordLen} letras!`, 'error');
-            UI.shakeRow(Player.currentAttempt);
-            return;
-        }
-
-        if (!/^[A-ZÁÉÍÓÚÃÕÂÊ]+$/.test(guess)) {
-            UI.showMessage('Use apenas letras!', 'error');
-            UI.shakeRow(Player.currentAttempt);
             return;
         }
 
@@ -111,7 +143,8 @@ const Game = {
                     }
                 }
 
-                this._currentGuess = '';
+                this._currentGuess = [];
+                this._hintPositions = [];
                 UI.updateScore();
                 UI.updatePowerUps();
             }
@@ -168,49 +201,40 @@ const Game = {
     _revealHint() {
         const target = this._currentWord;
         const guesses = Player.guesses;
-        const guessedLetters = guesses.join('').split('');
 
-        const unrevealed = target.split('').filter(l => !guessedLetters.includes(l));
+        const alreadyRevealed = new Set();
+        guesses.forEach(g => {
+            for (let i = 0; i < g.length; i++) {
+                if (g[i] === target[i]) {
+                    alreadyRevealed.add(i);
+                }
+            }
+        });
+        this._hintPositions.forEach(p => alreadyRevealed.add(p));
 
-        if (unrevealed.length === 0) {
-            UI.showMessage('Todas as letras já reveladas!');
+        const available = [];
+        for (let i = 0; i < target.length; i++) {
+            if (!alreadyRevealed.has(i)) {
+                available.push(i);
+            }
+        }
+
+        if (available.length === 0) {
+            UI.showMessage('Todas as letras já estão reveladas!');
             return;
         }
 
-        const randomLetter = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+        const randomIndex = available[Math.floor(Math.random() * available.length)];
+        const letter = target[randomIndex];
 
-        let hintIndex = -1;
-        for (let i = 0; i < target.length; i++) {
-            if (target[i] === randomLetter) {
-                const isAlreadyCorrect = guesses.some(g => g[i] === randomLetter);
-                if (!isAlreadyCorrect) {
-                    hintIndex = i;
-                    break;
-                }
-            }
-        }
+        this._usedHints++;
+        this._hintPositions.push(randomIndex);
+        this._hintPositions.sort((a, b) => a - b);
 
-        if (hintIndex !== -1) {
-            this._usedHints++;
-            const currentRow = Player.currentAttempt;
-            const cells = UI.elements.gridContainer.querySelectorAll(
-                `.grid-row[data-row="${currentRow}"] .grid-cell[data-col="${hintIndex}"]`
-            );
-            if (cells.length > 0) {
-                cells[0].textContent = randomLetter;
-                cells[0].classList.add('hint-revealed');
-                cells[0].classList.add('correct');
-                Keyboard.setKeyState(randomLetter, 'correct');
-            }
+        this._renderRow();
+        Keyboard.setKeyState(letter, 'correct');
 
-            this._currentGuess = this._currentGuess.padEnd(hintIndex + 1, ' ');
-            const guessArr = this._currentGuess.split('');
-            guessArr[hintIndex] = randomLetter;
-            this._currentGuess = guessArr.join('').trim();
-            UI.updateCurrentRow(currentRow, this._currentGuess, target.length);
-
-            UI.showMessage(`💡 Dica: letra "${randomLetter}" revelada!`, 'success', 2000);
-        }
+        UI.showMessage(`💡 Dica: "${letter}" na posição ${randomIndex + 1}!`, 'success', 2000);
     },
 
     togglePause() {
@@ -292,8 +316,9 @@ const Game = {
         const wordData = getRandomWord(difficulty, Player.phase + 1);
         this._currentWord = wordData.word.toUpperCase();
         this._currentHint = wordData.hint;
-        this._currentGuess = '';
+        this._currentGuess = [];
         this._usedHints = 0;
+        this._hintPositions = [];
 
         Player.nextPhase(newLength);
         UI.createGrid(this._currentWord.length, Player.maxAttempts);
@@ -312,7 +337,7 @@ const Game = {
         return {
             word: this._currentWord,
             hint: this._currentHint,
-            guess: this._currentGuess,
+            guess: this._currentGuess.join(''),
             isPlaying: this._isPlaying,
             isPaused: this._isPaused,
         };
