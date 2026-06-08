@@ -1,6 +1,6 @@
 # 🏆 Wordle Copa 2026
 
-Jogo **Wordle** temático da **Copa do Mundo 2026**, desenvolvido com HTML, CSS e JavaScript puro (sem engines ou canvas).
+Jogo **Wordle** temático da **Copa do Mundo 2026**, desenvolvido com HTML, CSS e JavaScript.
 
 ## Descrição do Funcionamento
 
@@ -18,29 +18,15 @@ O jogador deve adivinhar o nome de seleções da Copa do Mundo 2026 letra por le
 
 ### Dificuldades
 
-| Dificuldade | Tentativas | Vidas | Timer | Power-ups |
-|-------------|-----------|-------|-------|-----------|
-| Fácil       | 8         | 5     | Não   | 3 dicas, 2 vidas, 2 freeze |
-| Médio       | 6         | 3     | Não   | 2 dicas, 1 vida, 1 freeze |
-| Difícil     | 5         | 2     | 60s   | 1 dica, 0 vidas, 0 freeze |
+| Dificuldade | Tentativas | Vidas |  | Power-ups |
+|-------------|-----------|-------|-|-----------|
+| Fácil       | 8         | 5     | | 3 dicas, 2 vidas, 2 freeze |
+| Médio       | 6         | 3     | | 2 dicas, 1 vida, 1 freeze |
+| Difícil     | 5         | 2     | | 1 dica, 0 vidas, 0 freeze |
 
 ### Power-ups
 - 💡 **Dica**: Revela uma letra aleatória não descoberta
 - ❤️ **Vida Extra**: Adiciona +1 vida
-- ❄️ **Freeze**: Adiciona +30 segundos no modo difícil
-
-## Funcionalidades Implementadas
-
-### Requisitos Obrigatórios
-- [x] Apenas HTML, CSS e JavaScript com manipulação do DOM
-- [x] Diferentes estados (menu, jogando, pausa, fim de jogo)
-- [x] Interação do usuário (teclado físico e virtual)
-- [x] Movimentação de elementos na tela (animações)
-- [x] Detecção de colisões (comparação letra a letra)
-- [x] Sistema de vidas e pontuação
-- [x] Criação e remoção dinâmica de elementos (grade, teclado)
-- [x] Aumento de dificuldade ao longo das fases
-- [x] Código organizado em múltiplos arquivos JS
 
 ### Funcionalidades Adicionais (6)
 1. **Diferentes tipos de desafios**: Palavras de 5 a 9 letras com hint
@@ -94,14 +80,3 @@ TrabalhoFInalWeb/
         ├── game.js         # Lógica principal do jogo
         └── main.js         # Controle de estados e eventos
 ```
-
-## Tecnologias Utilizadas
-
-- **HTML5**: Estrutura semântica com múltiplas telas
-- **CSS3**: Variáveis, animações `@keyframes`, design responsivo, flexbox
-- **JavaScript (ES6+)**: Manipulação do DOM, Web Audio API, localStorage, modularização
-- Nenhuma biblioteca externa, framework ou engine foi utilizado.
-
-## Autor
-
-Projeto desenvolvido para a disciplina de Desenvolvimento Web.
