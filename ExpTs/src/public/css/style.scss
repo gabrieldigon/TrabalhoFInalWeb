@@ -1,0 +1,323 @@
+// Wordle Copa 2026 - Main Styles
+
+$primary-color: #6c5ce7;
+$success-color: #00b894;
+$warning-color: #fdcb6e;
+$danger-color: #e17055;
+$dark-color: #2d3436;
+$light-color: #dfe6e9;
+
+// Grid styles
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin: 0 auto;
+}
+
+.grid-row {
+  display: flex;
+  gap: 5px;
+}
+
+.grid-cell {
+  width: 50px;
+  height: 50px;
+  border: 2px solid $light-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+
+  &.filled {
+    border-color: $dark-color;
+    animation: pop 0.2s ease;
+  }
+
+  &.correct {
+    background-color: $success-color;
+    border-color: $success-color;
+    color: white;
+  }
+
+  &.misplaced {
+    background-color: $warning-color;
+    border-color: $warning-color;
+    color: white;
+  }
+
+  &.wrong {
+    background-color: #636e72;
+    border-color: #636e72;
+    color: white;
+  }
+
+  &.hint-revealed {
+    background-color: $primary-color;
+    border-color: $primary-color;
+    color: white;
+  }
+
+  &.flip {
+    animation: flip 0.5s ease;
+  }
+
+  &.pop {
+    animation: pop 0.2s ease;
+  }
+}
+
+// Keyboard styles
+.keyboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 4px;
+}
+
+.key {
+  width: 35px;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.correct {
+    background-color: $success-color;
+    color: white;
+    border-color: $success-color;
+  }
+
+  &.misplaced {
+    background-color: $warning-color;
+    color: white;
+    border-color: $warning-color;
+  }
+
+  &.wrong {
+    background-color: #636e72;
+    color: white;
+    border-color: #636e72;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.wide {
+    width: 65px;
+    font-size: 0.7rem;
+  }
+}
+
+// Power-up buttons
+.powerup-btn {
+  padding: 8px 16px;
+  margin: 0 5px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Message display
+.message {
+  text-align: center;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+
+  &.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  &.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  &.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+  }
+}
+
+// Pause overlay
+.pause-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pause-modal {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+// History modal
+.history-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.history-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.history-list {
+  margin: 20px 0;
+}
+
+.history-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  background: #f8f9fa;
+
+  &.won {
+    border-left: 4px solid $success-color;
+  }
+
+  &.lost {
+    border-left: 4px solid $danger-color;
+  }
+}
+
+.history-word {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.history-score {
+  font-weight: bold;
+  color: $primary-color;
+}
+
+.history-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.empty-history {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+// Shake animation
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.5s ease;
+}
+
+// Pop animation
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+// Flip animation
+@keyframes flip {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+
+// Utility classes
+.hidden {
+  display: none !important;
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .grid-cell {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .key {
+    width: 28px;
+    height: 40px;
+    font-size: 0.8rem;
+
+    &.wide {
+      width: 50px;
+    }
+  }
+}

@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0">🏆 Ranking - Top 10 Jogadores</h3>
+            </div>
+            <div class="card-body">
+                {{#if ranking.length}}
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Jogador</th>
+                            <th>Pontuação Total</th>
+                            <th>Jogos Ganhos</th>
+                            <th>Total de Jogos</th>
+                            <th>Aproveitamento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each ranking}}
+                        <tr>
+                            <td><strong>{{add @index 1}}º</strong></td>
+                            <td>{{this.fullName}}</td>
+                            <td class="fw-bold text-success">{{this.totalScore}}</td>
+                            <td>{{this.gamesWon}}</td>
+                            <td>{{this.totalGames}}</td>
+                            <td>
+                                {{#if this.totalGames}}
+                                    {{multiply (divide this.gamesWon this.totalGames) 100}}%
+                                {{else}}
+                                    0%
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{else}}
+                <div class="text-center py-5">
+                    <p class="lead">Nenhum jogo registrado ainda.</p>
+                    <p>Seja o primeiro a jogar e aparecer no ranking!</p>
+                    <a href="/" class="btn btn-primary">Jogar Agora</a>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
